@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>X-RAY Platform - Template</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue: #0A84FF; --green: #30D158; --red: #FF453A;
+  --bg: #000000; --glass: rgba(28,28,30,0.80);
+  --glass-border: rgba(255,255,255,0.09); --glass-hover: rgba(10,132,255,0.30);
+  --text: #FFFFFF; --muted: rgba(255,255,255,0.40);
+  --shadow: 0 20px 60px rgba(0,0,0,0.55);
+}
+[data-theme="light"] {
+  --bg: #F2F2F7; --glass: rgba(255,255,255,0.78);
+  --glass-border: rgba(0,0,0,0.07); --glass-hover: rgba(10,132,255,0.25);
+  --text: #000000; --muted: rgba(0,0,0,0.38);
+  --shadow: 0 20px 60px rgba(0,0,0,0.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:var(--bg);
+  background-image:
+    radial-gradient(ellipse 90% 50% at 50% -5%, rgba(10,132,255,0.28), transparent),
+    radial-gradient(ellipse 40% 30% at 85% 85%, rgba(48,209,88,0.07), transparent);
+  color:var(--text); font-family:'IBM Plex Sans Arabic',sans-serif;
+  min-height:100vh; display:flex; flex-direction:column; align-items:center;
+  padding:14px 14px 90px; transition:background .4s,color .4s;
+}
+.dynamic-island {
+  position:fixed; top:12px; left:50%; transform:translateX(-50%);
+  z-index:1000; display:flex; align-items:center; gap:8px;
+  background:#1c1c1e; border-radius:22px; padding:8px 18px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.6); cursor:pointer;
+  text-decoration:none; transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.1); -webkit-tap-highlight-color:transparent;
+}
+.dynamic-island:active{transform:translateX(-50%) scale(0.96);background:#2c2c2e;}
+.dynamic-island .di-icon{width:18px;height:18px;flex-shrink:0;fill:#24A1DE;}
+.dynamic-island .di-text{font-weight:700;font-size:0.82rem;color:#ffffff;letter-spacing:0.5px;white-space:nowrap;}
+
+.glass{background:var(–glass);backdrop-filter:blur(32px) saturate(200%);-webkit-backdrop-filter:blur(32px) saturate(200%);border:1px solid var(–glass-border);border-radius:22px;box-shadow:var(–shadow);}
+.header{width:min(500px,100%);padding:13px 18px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;margin-top:8px;}
+.logo{font-family:‘Space Mono’,monospace;font-size:.88rem;font-weight:700;letter-spacing:2px;color:var(–blue);}
+.logo b{color:var(–text);}
+.toggle-row{display:flex;align-items:center;gap:8px;}
+.toggle-lbl{font-size:.62rem;font-weight:700;color:var(–muted);letter-spacing:1px;}
+.ios-sw{width:51px;height:29px;background:#3a3a3c;border-radius:15px;position:relative;cursor:pointer;transition:background .3s;}
+[data-theme=“light”] .ios-sw{background:#e5e5ea;}
+.ios-sw::after{content:’’;position:absolute;top:3px;left:3px;width:23px;height:23px;background:#fff;border-radius:50%;transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:0 2px 6px rgba(0,0,0,.3);}
+[data-theme=“light”] .ios-sw::after{transform:translateX(22px);}
+
+.screen{width:min(500px,100%);display:none;}
+.screen.active{display:block;}
+.sec-label{font-size:.65rem;font-weight:700;color:var(–muted);letter-spacing:2px;text-transform:uppercase;margin:20px 0 10px 4px;}
+.lec-card{padding:16px 18px;margin-bottom:9px;display:flex;align-items:center;gap:14px;cursor:pointer;position:relative;overflow:hidden;transition:border-color .2s,transform .15s,box-shadow .2s;}
+.lec-num{width:44px;height:44px;border-radius:11px;background:rgba(10,132,255,.12);border:1px solid rgba(10,132,255,.22);display:flex;align-items:center;justify-content:center;font-family:‘Space Mono’,monospace;font-size:.72rem;font-weight:700;color:var(–blue);flex-shrink:0;}
+.lec-body{flex:1;}
+.lec-name{font-size:.93rem;font-weight:700;margin-bottom:3px;}
+.lec-count{font-size:.72rem;color:var(–muted);}
+
+.progress-wrap{margin-bottom:14px;padding:14px 18px;}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.prog-lec{font-size:.72rem;font-weight:700;color:var(–blue);letter-spacing:.5px;}
+.prog-bar{height:4px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;background:var(–blue);border-radius:4px;transition:width .4s cubic-bezier(.4,0,.2,1);width:0%;}
+
+.quiz-card{padding:22px 20px;margin-bottom:10px;}
+.q-text{font-size:1.0rem;font-weight:700;line-height:1.7;text-align:center;margin-bottom:16px;}
+.trans-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.btn-tr{background:rgba(10,132,255,.08);border:1px solid rgba(10,132,255,.18);color:var(–blue);padding:8px;border-radius:10px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:‘IBM Plex Sans Arabic’,sans-serif;}
+.opt{padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(–glass-border);cursor:pointer;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+.opt-letter{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-family:‘Space Mono’,monospace;font-size:.72rem;font-weight:700;color:var(–blue);flex-shrink:0;}
+.opt.correct{background:rgba(48,209,88,.15);border-color:rgba(48,209,88,.5);}
+.opt.wrong{background:rgba(255,69,58,.15);border-color:rgba(255,69,58,.5);}
+.opt.correct .opt-letter{background:rgba(48,209,88,.3);color:#30D158;}
+.opt.wrong .opt-letter{background:rgba(255,69,58,.3);color:#FF453A;}
+.next-btn{width:100%;padding:15px;background:var(–blue);color:#fff;border:none;border-radius:14px;font-family:‘IBM Plex Sans Arabic’,sans-serif;font-weight:700;font-size:1rem;cursor:pointer;display:none;margin-top:10px;}
+.back-btn{width:100%;padding:12px;background:transparent;color:var(–muted);border:1px solid var(–glass-border);border-radius:14px;font-family:‘IBM Plex Sans Arabic’,sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;margin-bottom:12px;}
+
+.result-card{padding:30px 20px;text-align:center;}
+.result-score{font-size:3rem;font-weight:800;color:var(–blue);font-family:‘Space Mono’,monospace;}
+.result-label{font-size:.9rem;color:var(–muted);margin-top:6px;margin-bottom:20px;}
+.restart-btn{width:100%;padding:15px;background:var(–blue);color:#fff;border:none;border-radius:14px;font-family:‘IBM Plex Sans Arabic’,sans-serif;font-weight:700;font-size:1rem;cursor:pointer;}
+
+.empty-state{padding:40px 20px;text-align:center;color:var(–muted);font-size:0.9rem;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.quiz-card, .lec-card {animation:fadeUp .35s ease both;}
+</style>
+
+</head>
+<body data-theme="dark">
+
+<a href="https://t.me/XrayB1" target="_blank" class="dynamic-island">
+  <svg class="di-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+  <span class="di-text">قناة X-RAY على التليجرام</span>
+</a>
+
+<div class="header glass">
+  <div class="logo">X<b>-RAY</b> <span style="color:var(--muted);font-size:.7rem;letter-spacing:1px;">PLATFORM</span></div>
+  <div class="toggle-row">
+    <span class="toggle-lbl">MODE</span>
+    <div class="ios-sw" onclick="toggleMode()"></div>
+  </div>
+</div>
+
+<div id="screen-home" class="screen active">
+  <div class="sec-label">المحاضرات المتاحة</div>
+  <div id="lectures-list"></div>
+</div>
+
+<div id="screen-quiz" class="screen">
+  <button class="back-btn" onclick="goHome()">← العودة للمحاضرات</button>
+  <div class="progress-wrap glass">
+    <div class="prog-top">
+      <span class="prog-lec" id="prog-lec-name">جاري التحميل...</span>
+      <span class="prog-count" id="prog-count">0/0</span>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+  </div>
+  <div class="quiz-card glass" id="quiz-card">
+    <div class="q-text" id="q-text">نص السؤال سيظهر هنا</div>
+    <div class="trans-row">
+      <button class="btn-tr" onclick="translateQuestion()">🌐 ترجمة السؤال</button>
+      <button class="btn-tr" onclick="translateOptions()">🌐 ترجمة الخيارات</button>
+    </div>
+    <div id="opts-wrap"></div>
+    <button id="next-btn" class="next-btn" onclick="nextQuestion()">السؤال التالي ←</button>
+  </div>
+</div>
+
+<div id="screen-result" class="screen">
+  <div class="result-card glass">
+    <div class="result-score" id="result-score">0/0</div>
+    <div class="result-label">نتيجتك في هذه المحاضرة</div>
+    <button class="restart-btn" onclick="goHome()">العودة للمحاضرات</button>
+  </div>
+</div>
+
+<script>
+const QUESTIONS_DATA = [
+  {
+    lecture: 1,
+    title: "X-Ray Machine System & Operating Console",
+    questions: [
+      {
+        q: "What is the primary medical use of an X-ray machine?",
+        opts: ["To measure blood pressure", "To acquire images of internal structures of living organisms", "To perform surgical operations", "To measure body temperature"],
+        ans: 1
+      },
+      {
+        q: "What type of material is the patient examination couch ideally made of to reduce radiation dose?",
+        opts: ["Steel", "Wood", "Carbon fiber", "Aluminum"],
+        ans: 2
+      },
+      {
+        q: "Which X-ray system type is described as stationary, high-power, and floor or ceiling-mounted?",
+        opts: ["Mobile X-ray system", "Portable X-ray machine", "Fixed X-ray system", "C-arm system"],
+        ans: 2
+      },
+      {
+        q: "A radiographer needs to image a patient in the ICU ward without moving the patient to the radiology department. Which system type is most appropriate?",
+        opts: ["Fixed X-ray system", "Mobile X-ray system", "DEXA scanner", "Mammography system"],
+        ans: 1
+      },
+      {
+        q: "Which of the following correctly lists the three principal parts of every X-ray machine?",
+        opts: ["Cathode, anode, glass envelope", "Control console, high-voltage generator, X-ray tube", "Filament, focusing cup, target", "Rectifier, transformer, timer"],
+        ans: 1
+      },
+      {
+        q: "The operating console is described as the technician's 'cockpit' because it allows control of:",
+        opts: ["Only kVp and mA", "kVp, mA, and exposure time", "Only exposure time", "Only the X-ray tube position"],
+        ans: 1
+      },
+      {
+        q: "Most X-ray machines are designed to operate on which power source voltage?",
+        opts: ["110 V", "380 V", "220 V", "440 V"],
+        ans: 2
+      },
+      {
+        q: "What is the function of the Line Voltage Compensator?",
+        opts: ["Increases kVp to maximum", "Compensates incoming voltage to maintain a constant 220 V during exposure", "Controls the filament temperature", "Measures the mAs automatically"],
+        ans: 1
+      },
+      {
+        q: "Higher kilovoltage results in which of the following?",
+        opts: ["Longer wavelength X-rays and slower electrons", "Shorter wavelength X-rays and faster electrons", "Lower energy X-rays", "Reduced penetration of the X-ray beam"],
+        ans: 1
+      },
+      {
+        q: "Which factor primarily affects the quantity of X-rays produced?",
+        opts: ["kVp", "mAs", "Filtration", "SID"],
+        ans: 1
+      },
+      {
+        q: "Which type of exposure timer is considered the most accurate and most expensive?",
+        opts: ["Mechanical timer", "Synchronous timer", "Electronic timer", "mAs timer"],
+        ans: 2
+      },
+      {
+        q: "A technologist wants the exposure to terminate automatically when the image receptor has received sufficient radiation. Which timer type achieves this?",
+        opts: ["Mechanical timer", "Synchronous timer", "mAs timer", "Automatic exposure control (AEC) timer"],
+        ans: 3
+      },
+      {
+        q: "The mAs timer terminates exposure when:",
+        opts: ["A capacitor is fully charged", "The desired product of mA and time is attained", "The synchronous motor completes one revolution", "The filament reaches maximum temperature"],
+        ans: 1
+      },
+      {
+        q: "Which X-ray system provides real-time, continuous X-ray imaging?",
+        opts: ["Mammography system", "DEXA scanner", "Fluoroscopy system", "Portable X-ray machine"],
+        ans: 2
+      },
+      {
+        q: "Which system is specifically designed for breast imaging using low-dose X-rays?",
+        opts: ["C-arm system", "U-arm system", "Mammography system", "Dental panoramic system"],
+        ans: 2
+      }
+    ]
+  },
+  {
+    lecture: 2,
+    title: "High Voltage Generators",
+    questions: [
+      {
+        q: "What is the primary function of the high voltage generator (HVG) in an X-ray system?",
+        opts: ["To cool the X-ray tube", "To convert low-voltage input into high-voltage energy to accelerate electrons", "To control patient positioning", "To process the digital image"],
+        ans: 1
+      },
+      {
+        q: "The autotransformer operates on which principle?",
+        opts: ["Mutual induction", "Self-induction", "Electromagnetic radiation", "Photoelectric effect"],
+        ans: 1
+      },
+      {
+        q: "The high-voltage transformer is a step-up transformer because:",
+        opts: ["The primary voltage is greater than the secondary voltage", "The number of secondary windings is greater than the number of primary windings", "It converts DC to AC", "It uses self-induction principle"],
+        ans: 1
+      },
+      {
+        q: "The turns ratio of the high-voltage transformer is typically between:",
+        opts: ["10 and 100", "100 and 300", "500 and 1000", "1000 and 5000"],
+        ans: 2
+      },
+      {
+        q: "Rectification is needed in X-ray tubes because:",
+        opts: ["X-ray tubes require alternating current", "X-ray tubes must be provided with direct current", "Transformers only work with DC", "Rectification increases the kVp"],
+        ans: 1
+      },
+      {
+        q: "Half-wave rectification uses how many diodes?",
+        opts: ["One diode", "Two diodes", "Four diodes", "Six diodes"],
+        ans: 1
+      },
+      {
+        q: "Full-wave rectification contains at least how many diodes, and what does it achieve?",
+        opts: ["Two diodes; removes the positive half-cycle", "Four diodes; reverses the negative half-cycle so positive voltage always directs across the tube", "Six diodes; doubles the kVp", "Eight diodes; eliminates all voltage ripple"],
+        ans: 1
+      },
+      {
+        q: "A single-phase, full-wave rectified generator produces how many pulsations per second and what percentage voltage ripple?",
+        opts: ["60 pulsations, 50% ripple", "120 pulsations, 100% ripple", "360 pulsations, 13% ripple", "720 pulsations, 3% ripple"],
+        ans: 1
+      },
+      {
+        q: "A six-pulse three-phase generator reduces voltage ripple to approximately:",
+        opts: ["100%", "50%", "13%", "1%"],
+        ans: 2
+      },
+      {
+        q: "A 12-pulse three-phase generator reduces voltage ripple to approximately:",
+        opts: ["13%", "6%", "3%", "Less than 1%"],
+        ans: 2
+      },
+      {
+        q: "Which generator type has a voltage ripple of less than 1% and the shortest exposure time?",
+        opts: ["Single-phase generator", "Three-phase six-pulse generator", "Three-phase twelve-pulse generator", "High-frequency generator"],
+        ans: 3
+      },
+      {
+        q: "High-frequency generators increase the standard frequency from 60 Hz to approximately:",
+        opts: ["120 Hz", "500 Hz", "500 kHz", "1 MHz"],
+        ans: 2
+      },
+      {
+        q: "Which circuit component of the X-ray machine includes the Line Voltage Compensator, Autotransformer, and Exposure Timer?",
+        opts: ["Secondary circuit", "Filament circuit", "Primary circuit", "Rectifier circuit"],
+        ans: 2
+      },
+      {
+        q: "The filament step-down transformer decreases voltage to and increases amperage to:",
+        opts: ["5-10 V and 1-2 A", "10-12 V and 3-5 A", "20-30 V and 6-8 A", "50 V and 10 A"],
+        ans: 1
+      },
+      {
+        q: "Which waveform type produces the largest amount of low-energy soft X-rays absorbed by the patient?",
+        opts: ["High-frequency waveform", "Three-phase waveform", "Single-phase waveform with 100% ripple", "Constant potential waveform"],
+        ans: 2
+      },
+      {
+        q: "For the same technical factors (kVp, mA), which generator type produces the highest quantity of photons?",
+        opts: ["Single-phase generator", "Three-phase six-pulse generator", "Three-phase twelve-pulse generator", "High-frequency generator"],
+        ans: 3
+      }
+    ]
+  },
+  {
+    lecture: 3,
+    title: "X-Ray Tube",
+    questions: [
+      {
+        q: "Which are the four major components of an X-ray tube?",
+        opts: ["Filament, focusing cup, target, housing", "Cathode, anode, glass envelope, protective housing", "Rotor, stator, target, window", "Transformer, rectifier, filament, anode"],
+        ans: 1
+      },
+      {
+        q: "Thermionic emission in the X-ray tube filament occurs when current reaches approximately:",
+        opts: ["1 A", "2 A", "4 A and above", "10 A"],
+        ans: 2
+      },
+      {
+        q: "Filaments are made of thoriated tungsten. Adding 1-2% thorium serves to:",
+        opts: ["Increase the melting point only", "Increase efficiency of thermionic emission and prolong tube life", "Reduce the size of the focal spot", "Decrease heat generation"],
+        ans: 1
+      },
+      {
+        q: "The focusing cup in the X-ray tube cathode is negatively charged in order to:",
+        opts: ["Attract electrons toward the cathode", "Condense the electron beam to a small area of the anode called the focal spot", "Increase the tube current", "Cool the filament"],
+        ans: 1
+      },
+      {
+        q: "A patient requires high tube current for a chest X-ray. Which filament should be used?",
+        opts: ["Small filament", "Large filament", "Either filament, they are identical", "A tungsten wire outside the tube"],
+        ans: 1
+      },
+      {
+        q: "Rotating anodes in general purpose X-ray tubes rotate at what standard speed?",
+        opts: ["1,200 rpm", "3,200 rpm", "5,000 rpm", "10,000 rpm"],
+        ans: 1
+      },
+      {
+        q: "What is the main advantage of rotating anodes over stationary anodes?",
+        opts: ["They are cheaper to manufacture", "They prevent any single spot from receiving successive electron pulses, preventing anode damage", "They eliminate the need for a focusing cup", "They reduce the kVp required"],
+        ans: 1
+      },
+      {
+        q: "Which of the following is NOT a reason tungsten is used as the target material?",
+        opts: ["High atomic number (74)", "High melting point (3410°C)", "Low cost compared to all other metals", "Thermal conductivity nearly equal to copper"],
+        ans: 2
+      },
+      {
+        q: "The line focus principle refers to:",
+        opts: ["Aligning the anode with the cathode in a straight line", "Angling the anode target so the effective focal spot is smaller than the actual focal spot", "Using multiple filaments to focus the electron beam", "Placing the grid parallel to the X-ray beam"],
+        ans: 1
+      },
+      {
+        q: "The most common target angle used in diagnostic radiography is:",
+        opts: ["5 degrees", "12 degrees", "25 degrees", "45 degrees"],
+        ans: 1
+      },
+      {
+        q: "As the anode angle decreases, which of the following occurs?",
+        opts: ["The effective focal spot becomes larger and image detail worsens", "The effective focal spot appears smaller, enhancing image detail", "The anode heel effect decreases", "The actual focal spot increases in size"],
+        ans: 1
+      },
+      {
+        q: "The anode heel effect causes a decrease in X-ray beam intensity from:",
+        opts: ["Anode to cathode direction", "Cathode to anode direction", "Center to periphery", "Left to right"],
+        ans: 1
+      },
+      {
+        q: "When imaging a thick body part using the anode heel effect, the cathode side should be placed over:",
+        opts: ["The thinner area because it needs less penetration", "The area of greatest density as it has the most penetrating beam", "The edge of the patient", "The area closest to the image receptor"],
+        ans: 1
+      },
+      {
+        q: "Decreasing the anode angle results in which combination?",
+        opts: ["Smaller focal spot and smaller anode heel effect", "Larger focal spot and larger anode heel effect", "Smaller focal spot and larger anode heel effect", "Larger focal spot and smaller anode heel effect"],
+        ans: 2
+      },
+      {
+        q: "The glass envelope of the X-ray tube is usually made of Pyrex glass primarily because:",
+        opts: ["Pyrex is transparent to X-rays", "Pyrex can withstand tremendous heat", "Pyrex is cheaper than other materials", "Pyrex has a low atomic number"],
+        ans: 1
+      },
+      {
+        q: "The protective housing of the X-ray tube contains oil that serves as:",
+        opts: ["A lubricant for the rotating anode only", "Both an electrical insulator and a thermal cushion", "A contrast medium for imaging", "A filter for low-energy X-rays"],
+        ans: 1
+      }
+    ]
+  },
+  {
+    lecture: 4,
+    title: "X-Ray Tube Failure",
+    questions: [
+      {
+        q: "Which of the following is NOT listed as a common cause of X-ray tube failure?",
+        opts: ["Extremely high voltage", "Excessive heat generation", "Improper patient positioning", "Rough handling"],
+        ans: 2
+      },
+      {
+        q: "Cracking of the X-ray tube housing is caused by:",
+        opts: ["Vaporization of the filament", "Expansion of air and oil inside, increasing internal pressure", "Loss of vacuum in the glass envelope", "Pitting of the anode surface"],
+        ans: 1
+      },
+      {
+        q: "Radiation leakage from the X-ray tube housing should not exceed:",
+        opts: ["10 mR/hr", "50 mR/hr", "100 mR/hr", "500 mR/hr"],
+        ans: 2
+      },
+      {
+        q: "Loss of vacuum in the glass envelope results in:",
+        opts: ["Improved X-ray output quality", "Production of secondary electrons and uncontrollable X-ray production", "Reduced heat generation", "Longer tube life"],
+        ans: 1
+      },
+      {
+        q: "The recommended remedy for preventing glass envelope faults caused by differences in expansion coefficients is to:",
+        opts: ["Use special alloys with the same coefficients of linear expansion as Pyrex glass", "Replace the glass with metal", "Reduce the kVp used", "Increase cooling oil volume"],
+        ans: 0
+      },
+      {
+        q: "Filament vaporization is caused by:",
+        opts: ["Using too low a tube current", "Excessive heating of the filament for longer periods", "Loss of vacuum in the tube", "Kinking of the anode target"],
+        ans: 1
+      },
+      {
+        q: "To prevent filament vaporization, tungsten is mixed with 1-2% thorium. What does this achieve?",
+        opts: ["Increases the filament resistance", "Reduces the risk of vaporization and breakage of the filament", "Increases the melting point of tungsten only", "Reduces the electron emission efficiency"],
+        ans: 1
+      },
+      {
+        q: "Kinking of the anode target material results in:",
+        opts: ["Increased X-ray output", "Distortion of anode angle, narrowing of beam, and greater geometric unsharpness", "Improved image contrast", "Reduced patient dose"],
+        ans: 1
+      },
+      {
+        q: "Which alloy addition helps prevent kinking of the anode target?",
+        opts: ["10% Rhenium added to 90% tungsten", "5% Thorium added to 95% tungsten", "20% Molybdenum added to 80% tungsten", "15% Copper added to 85% tungsten"],
+        ans: 0
+      },
+      {
+        q: "Roughening and pitting of the anode surface results in:",
+        opts: ["Increased X-ray output and improved image quality", "Scattering and absorption of X-rays, leading to diminished X-ray output", "Better heat dissipation", "Longer tube life"],
+        ans: 1
+      },
+      {
+        q: "To minimize roughening and pitting of the anode surface, the recommended remedy includes:",
+        opts: ["Using the highest possible power settings", "Using the smallest possible focal spot", "Using lowest necessary power, largest possible focal spot, and longer exposures at reduced power", "Increasing tube current to maximum"],
+        ans: 2
+      },
+      {
+        q: "Anode warm-up should be performed if the X-ray system has not been energized for:",
+        opts: ["30 minutes or more", "1 hour or more", "2 hours or more", "4 hours or more"],
+        ans: 2
+      },
+      {
+        q: "Why should filament boost time be minimized?",
+        opts: ["It increases radiation dose to the patient", "Current applied for too long will shorten filament life and lead to unstable operation", "It causes the anode to overheat", "It increases the voltage ripple"],
+        ans: 1
+      },
+      {
+        q: "Using high tube current (mA) causes evaporation of tungsten from the filament. The recommended practice is to:",
+        opts: ["Use higher mA and shorter exposure time", "Use lower mA and longer exposure time to achieve the desired mAs", "Use higher kVp to compensate", "Use automatic exposure control only"],
+        ans: 1
+      }
+    ]
+  },
+  {
+    lecture: 5,
+    title: "Film, Intensifying Screens, Cassette & Processing",
+    questions: [
+      {
+        q: "What are the two basic parts of radiographic film?",
+        opts: ["Emulsion and supercoating", "Base and emulsion", "Adhesive layer and base", "Phosphor layer and reflective layer"],
+        ans: 1
+      },
+      {
+        q: "The emulsion of radiographic film consists of gelatin and silver halide crystals. What is the composition of these crystals?",
+        opts: ["95% silver iodide and remainder silver bromide", "95% silver bromide and remainder silver iodide", "100% silver bromide", "50% silver bromide and 50% silver chloride"],
+        ans: 1
+      },
+      {
+        q: "The supercoating layer of radiographic film serves to:",
+        opts: ["Store the latent image", "Provide mechanical support for the film", "Protect the emulsion from scratching, pressure, and contamination", "Allow the emulsion and base to maintain proper contact"],
+        ans: 2
+      },
+      {
+        q: "The base of radiographic film has a thickness ranging from:",
+        opts: ["50 to 100 micrometers", "150 to 300 micrometers", "500 to 600 micrometers", "1 to 2 mm"],
+        ans: 1
+      },
+      {
+        q: "The phosphor (active) layer of an intensifying screen serves to:",
+        opts: ["Protect the screen from abrasion", "Convert the energy of the X-ray beam into visible light", "Redirect light toward the film to increase efficiency", "Provide mechanical support"],
+        ans: 1
+      },
+      {
+        q: "The reflective layer of an intensifying screen is made of magnesium oxide or titanium dioxide and serves to:",
+        opts: ["Absorb scattered radiation", "Convert X-rays directly into electrical signals", "Intercept light headed in other directions and redirect it to the film", "Protect the phosphor from damage"],
+        ans: 2
+      },
+      {
+        q: "The front surface of a cassette (facing the X-ray source) should be made of:",
+        opts: ["Heavy metal to absorb backscatter", "Lead-lined material", "Low atomic number material such as plastic or cardboard", "Tungsten to filter low-energy X-rays"],
+        ans: 2
+      },
+      {
+        q: "The back cover of the cassette is made of heavy metal primarily to:",
+        opts: ["Increase the cassette durability", "Minimize backscatter radiation", "Improve screen-film contact", "Reduce the weight of the cassette"],
+        ans: 1
+      },
+      {
+        q: "In manual processing, what is the purpose of the stop bath step?",
+        opts: ["To remove unexposed silver halide from the emulsion", "To stop the development process and remove excess developer chemicals", "To harden the gelatin portion of the emulsion", "To remove remaining chemicals from the film"],
+        ans: 1
+      },
+      {
+        q: "During manual processing, which step converts the latent image to a manifest image by changing silver ions into metallic silver?",
+        opts: ["Wetting", "Development", "Fixation", "Washing"],
+        ans: 1
+      },
+      {
+        q: "The fixation step in manual processing serves to:",
+        opts: ["Convert the latent image to a visible image", "Dissolve and remove unexposed silver halide and harden the gelatin", "Stop the development process", "Remove remaining chemicals from the film"],
+        ans: 1
+      },
+      {
+        q: "In automatic processing, the thermostat-controlled heater maintains the developer at:",
+        opts: ["25°C", "30°C", "35°C", "40°C"],
+        ans: 2
+      },
+      {
+        q: "What is the function of the replenishment system in automatic processing?",
+        opts: ["Transports the film through the wet chemistry tanks", "Maintains constant agitation and temperature of chemicals", "Replaces chemicals as they are used up to maintain volume and chemical activity", "Provides power to thermal and mechanical components"],
+        ans: 2
+      },
+      {
+        q: "Which component of the automatic processor transports film through wet chemistry tanks and the drying chamber?",
+        opts: ["Temperature-control system", "Replenishment system", "Transport system (rollers, racks, drive motor)", "Circulation system"],
+        ans: 2
+      }
+    ]
+  },
+  {
+    lecture: 6,
+    title: "Filters and Grids",
+    questions: [
+      {
+        q: "What is the primary purpose of X-ray beam filtration?",
+        opts: ["To increase the number of X-ray photons", "To remove low-energy X-rays that have little diagnostic value and only expose the patient to radiation", "To increase image noise", "To reduce kVp"],
+        ans: 1
+      },
+      {
+        q: "Inherent filtration of an X-ray tube increases with age because:",
+        opts: ["The oil in the tube head evaporates", "Tungsten is vaporized and deposited on the inside of the window", "The Pyrex glass thickens over time", "The beryllium window is replaced automatically"],
+        ans: 1
+      },
+      {
+        q: "Special-purpose mammography tubes have very thin beryllium windows with inherent filtration of approximately:",
+        opts: ["0.5 mm Al", "0.3 mm Al", "0.1 mm Al", "1.0 mm Al"],
+        ans: 2
+      },
+      {
+        q: "Federal regulations require that an X-ray machine capable of operating at 70 kVp or higher must have total filtration of:",
+        opts: ["1.0 mm aluminum equivalent", "1.5 mm aluminum equivalent", "2.0 mm aluminum equivalent", "2.5 mm aluminum equivalent"],
+        ans: 3
+      },
+      {
+        q: "X-ray machines operating below 70 kVp need total filtration of:",
+        opts: ["0.5 mm aluminum equivalent", "1.0 mm aluminum equivalent", "1.5 mm aluminum equivalent", "2.5 mm aluminum equivalent"],
+        ans: 2
+      },
+      {
+        q: "Compensating filters are used to:",
+        opts: ["Increase the kVp of the beam", "Balance the uniform intensity of the X-ray beam and result in lower patient radiation dose", "Replace the added filtration", "Measure the HVL of the X-ray beam"],
+        ans: 1
+      },
+      {
+        q: "The Half-Value Layer (HVL) is defined as:",
+        opts: ["The thickness of material that absorbs all X-ray photons", "The thickness of absorbing material needed to reduce transmission by one half", "The distance at which X-ray intensity is halved", "The wavelength at which X-ray energy is maximum"],
+        ans: 1
+      },
+      {
+        q: "The mathematical relationship between HVL and the linear attenuation coefficient (u) is:",
+        opts: ["HVL = u / 0.693", "HVL = 0.693 / u", "HVL = u x 0.693", "HVL = 1 / u"],
+        ans: 1
+      },
+      {
+        q: "Medical diagnostic X-ray machines typically have HVLs ranging from:",
+        opts: ["0.5 to 1.5 mm Al", "1.0 to 2.0 mm Al", "2.3 to 5 mm Al", "5 to 10 mm Al"],
+        ans: 2
+      },
+      {
+        q: "A grid placed between the patient and film primarily serves to:",
+        opts: ["Reduce the primary beam intensity", "Prevent scattered radiation from reaching the X-ray film to improve contrast", "Magnify the image", "Filter the X-ray beam"],
+        ans: 1
+      },
+      {
+        q: "A high-quality grid can attenuate what percentage of scatter radiation?",
+        opts: ["20-30%", "40-60%", "80-90%", "95-99%"],
+        ans: 2
+      },
+      {
+        q: "What is the most common material used for grid strips?",
+        opts: ["Aluminum", "Copper", "Lead", "Tungsten"],
+        ans: 2
+      },
+      {
+        q: "One advantage of aluminum over plastic fiber as interspace material in grids is that aluminum is:",
+        opts: ["Cheaper to manufacture", "Non-hygroscopic and easier to manufacture with high quality", "More transparent to X-rays", "Lighter in weight"],
+        ans: 1
+      },
+      {
+        q: "Grid ratio is defined as:",
+        opts: ["The ratio of lead strip thickness to interspace width (T/D)", "The ratio of grid height to interspace width (h/D)", "The ratio of interspace width to grid height (D/h)", "The ratio of lead strip width to grid height (T/h)"],
+        ans: 1
+      },
+      {
+        q: "The most common grid ratios used in diagnostic radiography are:",
+        opts: ["2:1 to 4:1", "5:1 to 6:1", "8:1 to 10:1", "14:1 to 16:1"],
+        ans: 2
+      },
+      {
+        q: "The Contrast Improvement Factor (k) of a grid increases with:",
+        opts: ["Lower grid ratio and lower frequency", "Higher grid ratio and higher frequency", "Larger interspace material width", "Lower lead content"],
+        ans: 1
+      }
+    ]
+  },
+  {
+    lecture: 7,
+    title: "Grid Types",
+    questions: [
+      {
+        q: "Which grid type consists of all lead strips arranged in parallel and is the simplest to manufacture?",
+        opts: ["Crossed grid", "Focused grid", "Parallel (linear) grid", "Moving grid"],
+        ans: 2
+      },
+      {
+        q: "The main problem with parallel (linear) grids is:",
+        opts: ["They cannot be used with any SID", "Grid cutoff, especially with short SIDs", "They are too expensive to manufacture", "They cannot remove scatter radiation"],
+        ans: 1
+      },
+      {
+        q: "A crossed grid is constructed by:",
+        opts: ["Tilting lead strips progressively from center to edge", "Moving the grid during exposure", "Placing two linear grids over each other with lead strips at right angles", "Using a single grid strip of variable thickness"],
+        ans: 2
+      },
+      {
+        q: "A 6:1 crossed grid cleans up more scatter than which of the following?",
+        opts: ["A 6:1 linear grid", "An 8:1 linear grid", "A 12:1 linear grid", "A 16:1 linear grid"],
+        ans: 2
+      },
+      {
+        q: "The main disadvantage of crossed grids is:",
+        opts: ["They produce grid lines on radiographs", "Positioning is critical; the central ray must coincide with the center of the grid", "They are less efficient than linear grids", "They cannot be used at any SID"],
+        ans: 1
+      },
+      {
+        q: "In a focused grid, lead strips are tilted progressively away from the center to:",
+        opts: ["Increase the grid ratio", "Correspond with the divergence of the X-ray beam and minimize grid cutoff", "Create a moving grid effect", "Eliminate all primary beam absorption"],
+        ans: 1
+      },
+      {
+        q: "The 'grid focus' of a focused grid is the point where:",
+        opts: ["The central ray intersects the image receptor", "Arrows drawn through each strip converge, and where the X-ray tube should be located", "The grid is attached to the cassette", "The interspace material ends"],
+        ans: 1
+      },
+      {
+        q: "All stationary grids produce grid lines on radiographs. Moving grids solve this problem by:",
+        opts: ["Eliminating the lead strips", "Moving the grid during the X-ray exposure", "Using a higher grid frequency", "Using plastic instead of lead strips"],
+        ans: 1
+      },
+      {
+        q: "Which type of moving grid uses a powerful electromagnet to pull the grid and release it, causing it to oscillate in a circular fashion?",
+        opts: ["Single-stroke grid", "Reciprocating grid", "Oscillating grid", "Focused moving grid"],
+        ans: 2
+      },
+      {
+        q: "The most common grid problem occurs when the grid is tilted or angled relative to the central ray. This is called:",
+        opts: ["Off center", "Off focus", "Off level", "Upside-down grid"],
+        ans: 2
+      },
+      {
+        q: "An 'off focus' grid problem occurs when:",
+        opts: ["The central axis does not coincide with the center of the grid", "The grid is tilted relative to the central ray", "The SID used does not match the focused grid's intended focal distance", "The grid is placed upside-down"],
+        ans: 2
+      },
+      {
+        q: "A focused grid is placed with its front surface facing the image receptor instead of the X-ray tube. This is an example of which grid problem?",
+        opts: ["Off level", "Off center", "Off focus", "Upside-down"],
+        ans: 3
+      },
+      {
+        q: "A reciprocating moving grid moves back and forth during exposure by approximately:",
+        opts: ["0.5 cm", "1 cm", "2 cm", "5 cm"],
+        ans: 2
+      },
+      {
+        q: "A single-stroke moving grid has a total grid movement of approximately:",
+        opts: ["0.5 to 1 cm", "2 to 3 cm", "5 to 6 cm", "8 to 10 cm"],
+        ans: 1
+      }
+    ]
+  },
+  {
+    lecture: 8,
+    title: "Computed Radiography (CR)",
+    questions: [
+      {
+        q: "What is the key difference between Computed Radiography (CR) and Direct-to-Digital Radiography (DDR)?",
+        opts: ["CR uses digital sensors; DDR uses film", "In CR, the cassette is removed and fed into a reader; in DDR, the image is produced directly from the detector", "CR produces 3D images; DDR produces 2D images", "CR uses amorphous selenium; DDR uses photostimulable phosphor"],
+        ans: 1
+      },
+      {
+        q: "CR technology is based on the property of photostimulable luminescence (PSL), which means:",
+        opts: ["The ability to produce X-rays when stimulated by visible light", "The ability to store X-ray energy temporarily and release it upon excitation by a laser beam", "The ability to convert X-rays directly into electrical signals", "The ability to emit gamma rays when stimulated by electrons"],
+        ans: 1
+      },
+      {
+        q: "The most common phosphor material used in CR imaging plates is:",
+        opts: ["Cesium iodide (CsI)", "Gadolinium oxysulfide", "Barium fluorobromide doped with europium (BaFBr:Eu)", "Amorphous selenium"],
+        ans: 2
+      },
+      {
+        q: "The photostimulable storage phosphor layer of a CR imaging plate typically stores radiation dose as:",
+        opts: ["Heat energy in the phosphor crystals", "Elevated electron energies (a latent image) in the phosphor layer", "Visible light photons emitted immediately", "An electrical charge pattern in a TFT array"],
+        ans: 1
+      },
+      {
+        q: "One X-ray photon absorbed in the CR phosphor crystal gives rise to approximately how many trapped electrons?",
+        opts: ["10 trapped electrons", "Over 100 trapped electrons", "Over 1000 trapped electrons", "Exactly 1 trapped electron"],
+        ans: 1
+      },
+      {
+        q: "During laser stimulated emission in CR, the laser releases stored energy as light photons detected by optical fibers connected to a:",
+        opts: ["Flat panel detector (FPD)", "Photomultiplier tube (PM)", "Thin-film transistor (TFT) array", "Analog-to-digital converter only"],
+        ans: 1
+      },
+      {
+        q: "In CR image processing, the analog-to-digital converter (ADC) converts the electronic signal into:",
+        opts: ["Visible light photons", "Laser beam pulses", "Discrete digital values for each pixel", "A magnetic signal for storage"],
+        ans: 2
+      },
+      {
+        q: "After readout in CR, the imaging plate is exposed to bright flood light to:",
+        opts: ["Increase the sensitivity of the plate for the next exposure", "Erase residual signals before reuse", "Develop the latent image further", "Amplify the stored electronic signal"],
+        ans: 1
+      },
+      {
+        q: "Which of the following is an advantage of CR over traditional film-based radiography?",
+        opts: ["CR requires silver-based film and chemicals", "CR images can be previewed in less than 10 seconds and stored digitally", "CR is faster than DDR for image acquisition", "CR imaging plates cannot be reused"],
+        ans: 1
+      },
+      {
+        q: "A disadvantage of CR compared to DDR is:",
+        opts: ["CR produces lower resolution images in all conditions", "Manual handling of the cassette is required, unlike DDR", "CR cannot store images digitally", "CR uses amorphous silicon, which is more expensive than phosphor plates"],
+        ans: 1
+      },
+      {
+        q: "CR imaging plates can theoretically be reused how many times if handled carefully?",
+        opts: ["Hundreds of times", "Thousands of times", "Only once", "Tens of times"],
+        ans: 1
+      },
+      {
+        q: "The readout process in CR is described as 'destructive' because:",
+        opts: ["It physically damages the imaging plate", "It eliminates the latent image during readout", "It reduces the sensitivity of the phosphor permanently", "It exposes the imaging plate to excessive radiation"],
+        ans: 1
+      }
+    ]
+  },
+  {
+    lecture: 9,
+    title: "Direct-to-Digital Radiography (DDR)",
+    questions: [
+      {
+        q: "DDR (Direct-to-Digital Radiography) uses flat panel detectors (FPDs) based on which materials?",
+        opts: ["Barium fluorobromide and europium", "Cesium iodide and gadolinium oxysulfide only", "Amorphous silicon or amorphous selenium", "Photostimulable phosphor and laser"],
+        ans: 2
+      },
+      {
+        q: "In an indirect-conversion DDR detector, X-rays are first converted to visible light by a scintillator, and then the light is converted into electric charge by:",
+        opts: ["Amorphous selenium photoconductor", "Amorphous silicon photodiode arrays", "Thin-film transistor arrays directly", "A photomultiplier tube"],
+        ans: 1
+      },
+      {
+        q: "In a direct-conversion DDR detector, X-ray photons are converted into electric charge:",
+        opts: ["Via an intermediate scintillator layer", "Directly by amorphous selenium without intermediate steps", "By cesium iodide and then amorphous silicon", "By gadolinium oxysulfide and TFT arrays"],
+        ans: 1
+      },
+      {
+        q: "A voltage of approximately how much is applied in direct-conversion (a-Se) detectors to attract the charge to pixel electrodes?",
+        opts: ["500 V", "1000 V", "5000 V", "25000 V"],
+        ans: 2
+      },
+      {
+        q: "The essential component of flat panel detectors (FPDs) is the:",
+        opts: ["Photomultiplier tube", "Laser scanning system", "Active matrix array of millions of semiconductor elements", "Analog-to-digital converter only"],
+        ans: 2
+      },
+      {
+        q: "The smallest element in the FPD active matrix array is called a:",
+        opts: ["Voxel", "Pixel", "Matrix", "Element"],
+        ans: 1
+      },
+      {
+        q: "Array sizes in FPDs can be up to 43 cm x 43 cm with more than how many pixels?",
+        opts: ["1 million pixels", "9 million pixels", "100 million pixels", "500 thousand pixels"],
+        ans: 1
+      },
+      {
+        q: "Which scintillator materials are used in indirect DDR detectors?",
+        opts: ["Amorphous selenium and barium fluorobromide", "Cesium iodide (CsI) or gadolinium oxysulfide", "Europium-doped phosphor and amorphous silicon", "Tungsten and molybdenum"],
+        ans: 1
+      },
+      {
+        q: "In the TFT readout mechanism, during X-ray exposure all switches are:",
+        opts: ["Turned on to collect charge continuously", "Kept off during exposure", "Alternated on and off rapidly", "Set to half-open position"],
+        ans: 1
+      },
+      {
+        q: "The TFT array reads out the image in which manner?",
+        opts: ["All pixels simultaneously", "Randomly selected pixels", "Sequentially, row by row (line-by-line)", "Column by column starting from the center"],
+        ans: 2
+      },
+      {
+        q: "Compared to CR, DDR flat-panel detectors are:",
+        opts: ["Slower and heavier with more image distortion", "More sensitive, faster, lighter, more durable, and have less image distortion", "Less sensitive but cheaper and more portable", "Identical in speed but with higher resolution only"],
+        ans: 1
+      },
+      {
+        q: "CR readout time ranges from 45 seconds to 2 minutes, while DDR acquisition and image display is:",
+        opts: ["Also 45 seconds to 2 minutes", "5 to 10 minutes", "Immediate", "10 to 20 seconds only"],
+        ans: 2
+      },
+      {
+        q: "A disadvantage of DDR (DR) flat panel detectors compared to CR is:",
+        opts: ["DR produces lower image quality in all conditions", "DR plates are sensitive to temperature changes", "DR requires manual cassette handling", "DR uses photostimulable phosphor which is expensive"],
+        ans: 1
+      },
+      {
+        q: "CR image quality is historically lower than flat-panel DDR due to:",
+        opts: ["Lower phosphor thickness in CR plates", "Laser beam spreading within the phosphor material", "Higher voltage ripple in CR readers", "Lower sensitivity of the photomultiplier tube"],
+        ans: 1
+      }
+    ]
+  },
+  {
+    lecture: 10,
+    title: "Image Quality",
+    questions: [
+      {
+        q: "A high contrast image is characterized by:",
+        opts: ["A smaller difference between grey shades but a larger range of greys", "A greater difference between grey shades but a smaller range of greys", "Equal distribution of all grey shades", "Very low attenuation coefficients between tissues"],
+        ans: 1
+      },
+      {
+        q: "Subject contrast is proportional to (u1 - u2) x t, where t represents:",
+        opts: ["The tube voltage", "The thickness of the structure", "The type of detector", "The exposure time"],
+        ans: 1
+      },
+      {
+        q: "Higher kVp results in which effect on image contrast?",
+        opts: ["Higher contrast due to greater penetration", "Lower contrast due to greater penetration and more scatter", "No effect on contrast", "Higher contrast due to reduced scatter"],
+        ans: 1
+      },
+      {
+        q: "Which factor increases image density (makes the image darker)?",
+        opts: ["Decreasing mAs", "Increasing mAs", "Decreasing kVp", "Decreasing patient thickness"],
+        ans: 1
+      },
+      {
+        q: "In digital radiography, image contrast is altered by windowing. A larger window width results in:",
+        opts: ["Higher contrast between each shade", "A larger range of shades displayed and smaller difference in contrast between each shade", "Fewer grey levels displayed", "Increased image noise"],
+        ans: 1
+      },
+      {
+        q: "Spatial resolution refers to:",
+        opts: ["The ability to see two adjacent objects as separate and distinct", "The difference in signal intensity between two areas", "The amount of noise in the image", "The magnification factor of the image"],
+        ans: 0
+      },
+      {
+        q: "Increasing the SID (source-to-image distance) has what effect on spatial resolution?",
+        opts: ["Decreases spatial resolution", "Increases spatial resolution", "No effect on spatial resolution", "Only affects image density"],
+        ans: 1
+      },
+      {
+        q: "Which of the four blur factors is described as the most problematic?",
+        opts: ["Subject blur", "Motion blur", "Receptor blur", "Geometric blur"],
+        ans: 1
+      },
+      {
+        q: "Involuntary patient motion (such as heartbeat) is minimized by:",
+        opts: ["Patient instructions only", "Using very short exposure times", "Increasing the focal spot size", "Decreasing the SID"],
+        ans: 1
+      },
+      {
+        q: "Geometric blur increases with:",
+        opts: ["Decreasing focal spot size and decreasing OID", "Increasing focal spot size and increasing OID (object-to-image distance)", "Increasing SID and decreasing focal spot", "Decreasing kVp and increasing mAs"],
+        ans: 1
+      },
+      {
+        q: "The magnification formula is M = image size / object size = d2 / d1. As SID increases, size distortion (magnification):",
+        opts: ["Increases", "Decreases", "Remains unchanged", "First increases then decreases"],
+        ans: 1
+      },
+      {
+        q: "Quantum noise in digital radiography occurs when:",
+        opts: ["Too many photons reach the detector", "Too few photons reach the detector", "The detector has dead pixels", "Digitization translates analog output to discrete values"],
+        ans: 1
+      },
+      {
+        q: "Which type of noise is produced by non-uniform response of the image receptor to a uniform X-ray beam and can largely be eliminated through post-processing?",
+        opts: ["Quantum noise", "Quantization noise", "Electronic/detector noise (fixed pattern noise)", "Motion noise"],
+        ans: 2
+      },
+      {
+        q: "Quantization noise occurs during:",
+        opts: ["Excessive patient motion", "Digitization when translating analog output to discrete pixel values", "Use of insufficient filtration", "Grid misalignment"],
+        ans: 1
+      },
+      {
+        q: "Which of the following is an example of a hardware/receptor artifact?",
+        opts: ["Inappropriate exposure factors", "Incorrect patient position", "Scratches and cracks on image detectors", "Double exposure artifact"],
+        ans: 2
+      },
+      {
+        q: "Software artifacts caused by dead pixels during image processing are corrected by:",
+        opts: ["Increasing kVp", "Flat fielding", "Replacing the detector", "Increasing mAs"],
+        ans: 1
+      }
+    ]
+  },
+  {
+    lecture: 12,
+    title: "Mammography",
+    questions: [
+      {
+        q: "What is the primary purpose of mammography?",
+        opts: ["To detect cancer early before symptoms appear using a low-dose X-ray system for breast imaging", "To perform biopsies of breast tissue", "To measure bone mineral density in the breast", "To provide real-time imaging during breast surgery"],
+        ans: 0
+      },
+      {
+        q: "Diagnostic mammography differs from screening mammography in that diagnostic mammography:",
+        opts: ["Is used for routine testing in women with no complaints", "Is used to evaluate patients with abnormal clinical findings and may require additional views", "Uses a higher radiation dose than screening", "Is performed only once in a patient's lifetime"],
+        ans: 1
+      },
+      {
+        q: "Mammography X-ray tubes use which anode materials to produce characteristic X-rays?",
+        opts: ["Tungsten and Copper", "Molybdenum (Mo) and Rhodium (Rh)", "Tungsten and Rhenium", "Aluminum and Molybdenum"],
+        ans: 1
+      },
+      {
+        q: "The mammography tube is tilted about 25 degrees primarily to:",
+        opts: ["Increase the kVp", "Minimize the effective focal spot size", "Increase the field of view", "Reduce the patient dose only"],
+        ans: 1
+      },
+      {
+        q: "Mammography operates at a low kVp below:",
+        opts: ["50-60 kVp", "35-40 kVp", "70-80 kVp", "100 kVp"],
+        ans: 1
+      },
+      {
+        q: "Breast compression in mammography is necessary for all of the following reasons EXCEPT:",
+        opts: ["Evening out breast thickness", "Spreading out tissue so abnormalities are less hidden", "Increasing the radiation dose to the patient", "Holding the breast still to minimize motion blurring"],
+        ans: 2
+      },
+      {
+        q: "In mammography, the X-ray tube is oriented with the cathode over the chest wall side and the anode over the nipple side. This is due to:",
+        opts: ["The line focus principle", "The anode heel effect consideration", "The focusing cup design", "The grid ratio requirement"],
+        ans: 1
+      },
+      {
+        q: "Breast compression is achieved with which device?",
+        opts: ["A lead paddle", "A low-attenuating lexan paddle", "A carbon fiber compression plate", "A tungsten paddle"],
+        ans: 1
+      },
+      {
+        q: "Which type of mammography system replaced film with electronics that convert X-rays into digital mammographic pictures?",
+        opts: ["Film/Screen Mammography", "Scintimammography", "Digital Mammography (FFDM)", "Contrast Enhanced Digital Mammography (CEDM)"],
+        ans: 2
+      },
+      {
+        q: "Contrast Enhanced Digital Mammography (CEDM) is based on the principle that:",
+        opts: ["Rapidly growing tumors require increased blood supply, causing preferential accumulation of the contrast agent", "Dense breast tissue absorbs more iodinated contrast", "Contrast agents suppress normal breast tissue signal", "Calcifications are highlighted by iodinated contrast"],
+        ans: 0
+      },
+      {
+        q: "Breast Tomosynthesis (3D Mammography) works by:",
+        opts: ["Injecting a radiotracer and using a gamma camera", "Moving the X-ray tube in an arc over the breast to capture multiple images from different angles", "Using two different photon energies simultaneously", "Applying a strong magnetic field to the breast tissue"],
+        ans: 1
+      },
+      {
+        q: "Computer-Aided Detection (CAD) in mammography functions to:",
+        opts: ["Perform automatic biopsies", "Search digitized mammographic images for abnormal areas and highlight them for the radiologist", "Replace the radiologist in interpreting mammograms", "Control the compression paddle automatically"],
+        ans: 1
+      },
+      {
+        q: "Scintimammography uses an injection of technetium 99, which is taken up by cancer cells. This technique is particularly useful for patients with:",
+        opts: ["Very small breasts", "Abnormal mammograms, dense breast tissue, post-operative scar tissue, or breast implants", "Only early-stage cancers", "Calcifications larger than 5 cm"],
+        ans: 1
+      },
+      {
+        q: "Scintimammography has higher sensitivity than conventional mammography but is less accurate for abnormalities smaller than:",
+        opts: ["0.5 cm", "1 cm", "2 cm", "3 cm"],
+        ans: 1
+      }
+    ]
+  },
+  {
+    lecture: 14,
+    title: "Fluoroscopy",
+    questions: [
+      {
+        q: "Fluoroscopy differs from conventional radiography in that it provides:",
+        opts: ["Static images of internal structures", "Real-time moving images of internal structures", "Three-dimensional reconstructions of organs", "Images using radioactive tracers"],
+        ans: 1
+      },
+      {
+        q: "Which of the following is a common clinical application of fluoroscopy?",
+        opts: ["Measuring bone mineral density", "Angiography of the leg, heart, and cerebral vessels", "Early detection of breast cancer", "Measuring lung volume"],
+        ans: 1
+      },
+      {
+        q: "A C-arm fluoroscopic unit is most commonly used in:",
+        opts: ["Breast imaging departments", "Operating rooms for orthopedic procedures", "Dedicated barium study rooms only", "Nuclear medicine departments"],
+        ans: 1
+      },
+      {
+        q: "The image intensifier tube is approximately how long and operates in what condition?",
+        opts: ["10 cm long, in a pressurized environment", "50 cm long, in a vacuum", "30 cm long, filled with nitrogen gas", "20 cm long, in a saline solution"],
+        ans: 1
+      },
+      {
+        q: "The input phosphor of the image intensifier is made of cesium iodide and serves to:",
+        opts: ["Convert electrons into visible light at the output", "Convert incident X-ray photons into a burst of visible light photons", "Accelerate photoelectrons toward the anode", "Focus the electron beam using electrostatic lenses"],
+        ans: 1
+      },
+      {
+        q: "The photocathode of the image intensifier converts light photons into electrons by the process of:",
+        opts: ["Thermionic emission", "Photoemission", "Compton scatter", "Pair production"],
+        ans: 1
+      },
+      {
+        q: "A potential difference of approximately how much accelerates electrons toward the anode in the image intensifier?",
+        opts: ["1,000 V", "5,000 V", "25,000 V", "100,000 V"],
+        ans: 2
+      },
+      {
+        q: "The output phosphor of the image intensifier converts photoelectrons to light photons, multiplying each incident photoelectron into:",
+        opts: ["2-5 light photons", "10-20 light photons", "50-75 light photons", "100-200 light photons"],
+        ans: 2
+      },
+      {
+        q: "Brightness Gain of the image intensifier is calculated as:",
+        opts: ["Magnification gain + Flux gain", "Magnification gain x Flux gain", "Flux gain / Magnification gain", "Magnification gain - Flux gain"],
+        ans: 1
+      },
+      {
+        q: "Magnification gain in the image intensifier is the ratio of:",
+        opts: ["Output phosphor diameter squared to input phosphor diameter squared", "The square of the diameter of the input phosphor to the square of the diameter of the output phosphor", "Number of output photons to number of input photons", "Input phosphor diameter to output phosphor diameter"],
+        ans: 1
+      },
+      {
+        q: "In Digital Subtraction Angiography (DSA), a mask image is acquired before contrast administration. The purpose of the mask is to:",
+        opts: ["Enhance the bone structures in the image", "Be subtracted from subsequent images to remove distracting structures such as bones", "Increase the radiation dose for better contrast", "Set the correct kVp automatically"],
+        ans: 1
+      },
+      {
+        q: "Image subtraction in DSA causes a decrease in signal-to-noise ratio, making images noisier. The solution is to:",
+        opts: ["Decrease kVp", "Increase mA", "Decrease the frame rate", "Increase the SID"],
+        ans: 1
+      },
+      {
+        q: "Pulsed fluoroscopy with a variety of frame rates is used in modern angiography units primarily for:",
+        opts: ["Increasing image resolution", "Dose reduction", "Eliminating the need for contrast agents", "Increasing image magnification"],
+        ans: 1
+      },
+      {
+        q: "The modern angiography unit image matrix is at least:",
+        opts: ["256 x 256 pixels", "512 x 512 pixels", "1024 x 1024 pixels", "2048 x 2048 pixels"],
+        ans: 2
+      }
+    ]
+  },
+  {
+    lecture: 15,
+    title: "Bone Density Scan (DEXA) & OPG",
+    questions: [
+      {
+        q: "DEXA (Dual-energy X-ray Absorptiometry) is the most standard method for diagnosing:",
+        opts: ["Breast cancer", "Osteoporosis and assessing fracture risk", "Lung nodules", "Dental caries"],
+        ans: 1
+      },
+      {
+        q: "In DXA scanning, the X-ray source is located:",
+        opts: ["Over the patient's body", "Under the examination table, moving with the detection system", "At the patient's side", "Fixed above the gantry"],
+        ans: 1
+      },
+      {
+        q: "DXA uses an X-ray beam composed of two different photon energies. The purpose of using two energies is to:",
+        opts: ["Increase image resolution", "Compensate for the different attenuation coefficients of mineralized bone and soft tissues", "Reduce patient dose by half", "Eliminate the need for positioning the patient"],
+        ans: 1
+      },
+      {
+        q: "In DXA analysis, the attenuation values of soft tissues are subtracted by an algorithm, providing only:",
+        opts: ["Attenuation values of fat tissue", "Attenuation values of bone", "Attenuation values of muscle tissue", "Combined attenuation of all tissues"],
+        ans: 1
+      },
+      {
+        q: "The bone attenuation values obtained in DXA are compared with standard values in phantoms to obtain:",
+        opts: ["Bone volume in cubic centimeters", "Bone mineral content in grams", "Bone density in Hounsfield units", "Bone thickness in millimeters"],
+        ans: 1
+      },
+      {
+        q: "DXA can also estimate body composition because fat, bone mineral, and fat-free soft tissue have:",
+        opts: ["The same absorption properties", "Different absorption properties", "Identical HVL values", "The same linear attenuation coefficients"],
+        ans: 1
+      },
+      {
+        q: "A major consideration limiting large-scale population screening with DXA is that:",
+        opts: ["DXA produces very high radiation doses", "Although small, radiation dose still interferes with feasibility for large-scale screenings", "DXA requires general anesthesia", "DXA machines are not portable"],
+        ans: 1
+      },
+      {
+        q: "OPG (Orthopantomogram) is also known as panoramic radiography and captures:",
+        opts: ["A single tooth in high detail", "All teeth and jaws in a single image", "A cross-sectional slice of the jaw", "The temporomandibular joint only"],
+        ans: 1
+      },
+      {
+        q: "The X-ray source in the OPG machine emits what type of beam?",
+        opts: ["A wide cone beam covering the entire face at once", "A narrow fan-shaped beam that sweeps across the patient's face", "A pencil beam scanning point by point", "A parallel beam perpendicular to the jaw"],
+        ans: 1
+      },
+      {
+        q: "Patient positioning in OPG requires that the mid-sagittal plane is:",
+        opts: ["Parallel to the floor", "Perpendicular to the floor", "Tilted at 15 degrees", "Aligned with the X-ray beam direction"],
+        ans: 1
+      },
+      {
+        q: "The OPG machine performs a rotational sweep lasting approximately:",
+        opts: ["2-5 seconds", "10-20 seconds", "30-60 seconds", "2-3 minutes"],
+        ans: 1
+      },
+      {
+        q: "Which of the following is an advantage of OPG as an extra-oral radiograph?",
+        opts: ["It provides cross-sectional 3D images", "There are fewer limitations when the patient has difficulty opening their mouth or has a prominent gag reflex", "It uses no ionizing radiation", "It has higher resolution than intraoral X-rays for individual teeth"],
+        ans: 1
+      },
+      {
+        q: "CBCT (Cone Beam Computed Tomography) provides what advantage over OPG?",
+        opts: ["Lower radiation dose than OPG", "Three-dimensional imaging with a 1:1 ratio with anatomical structures, overcoming limitations of 2D OPG", "Faster acquisition time than OPG", "No need for patient positioning"],
+        ans: 1
+      },
+      {
+        q: "Despite CBCT's advantages, panoramic OPG imaging remains relevant because:",
+        opts: ["OPG produces better image quality than CBCT for all purposes", "CBCT is more expensive and involves higher radiation doses, making OPG still preferred for initial screenings", "OPG provides 3D images at lower cost", "CBCT cannot image the temporomandibular joint"],
+        ans: 1
+      }
+    ]
+  }
+];
+
+// ===== STATE =====
+let currentLecture = null;
+let currentQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let answered = false;
+let translatedQ = false;
+let translatedOpts = false;
+
+// ===== INIT =====
+function init() {
+  const list = document.getElementById('lectures-list');
+  list.innerHTML = '';
+  QUESTIONS_DATA.forEach((lec, i) => {
+    const card = document.createElement('div');
+    card.className = 'lec-card glass';
+    card.style.animationDelay = (i * 0.05) + 's';
+    card.innerHTML = `
+      <div class="lec-num">L${lec.lecture.toString().padStart(2,'0')}</div>
+      <div class="lec-body">
+        <div class="lec-name">${lec.title}</div>
+        <div class="lec-count">${lec.questions.length} سؤال</div>
+      </div>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    `;
+    card.onclick = () => startLecture(i);
+    list.appendChild(card);
+  });
+}
+
+function startLecture(idx) {
+  currentLecture = QUESTIONS_DATA[idx];
+  currentQuestions = [...currentLecture.questions];
+  currentIndex = 0;
+  score = 0;
+  showScreen('screen-quiz');
+  document.getElementById('prog-lec-name').textContent = currentLecture.title;
+  renderQuestion();
+}
+
+function renderQuestion() {
+  answered = false;
+  translatedQ = false;
+  translatedOpts = false;
+  const q = currentQuestions[currentIndex];
+  const total = currentQuestions.length;
+
+  document.getElementById('prog-count').textContent = `${currentIndex + 1}/${total}`;
+  document.getElementById('prog-fill').style.width = ((currentIndex + 1) / total * 100) + '%';
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('next-btn').style.display = 'none';
+
+  const wrap = document.getElementById('opts-wrap');
+  wrap.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.opts.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt glass';
+    div.style.animationDelay = (i * 0.07) + 's';
+    div.innerHTML = `<div class="opt-letter">${letters[i]}</div><span>${opt}</span>`;
+    div.onclick = () => selectAnswer(i, div, q.ans);
+    wrap.appendChild(div);
+  });
+}
+
+function selectAnswer(chosen, el, correct) {
+  if (answered) return;
+  answered = true;
+  const opts = document.querySelectorAll('#opts-wrap .opt');
+  opts.forEach((o, i) => {
+    o.style.pointerEvents = 'none';
+    if (i === correct) o.classList.add('correct');
+    else if (i === chosen && chosen !== correct) o.classList.add('wrong');
+  });
+  if (chosen === correct) score++;
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex >= currentQuestions.length) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResult() {
+  showScreen('screen-result');
+  document.getElementById('result-score').textContent = `${score}/${currentQuestions.length}`;
+}
+
+function goHome() {
+  showScreen('screen-home');
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function translateQuestion() {
+  const el = document.getElementById('q-text');
+  const q = currentQuestions[currentIndex];
+  if (!translatedQ) {
+    const ar = translateToArabic(q.q);
+    el.innerHTML = `<span style="display:block;">${q.q}</span><span style="display:block;margin-top:6px;font-size:0.85rem;color:var(--blue);font-weight:600;direction:rtl;">${ar}</span>`;
+    translatedQ = true;
+  } else {
+    el.innerHTML = `<span>${q.q}</span>`;
+    translatedQ = false;
+  }
+}
+
+function translateOptions() {
+  const opts = document.querySelectorAll('#opts-wrap .opt span');
+  const q = currentQuestions[currentIndex];
+  if (!translatedOpts) {
+    opts.forEach((el, i) => {
+      const ar = translateToArabic(q.opts[i]);
+      el.innerHTML = `<span style="display:block;">${q.opts[i]}</span><span style="display:block;margin-top:4px;font-size:0.78rem;color:var(--blue);font-weight:600;direction:rtl;">${ar}</span>`;
+    });
+    translatedOpts = true;
+  } else {
+    opts.forEach((el, i) => { el.innerHTML = `<span>${q.opts[i]}</span>`; });
+    translatedOpts = false;
+  }
+}
+
+// ترجمة باستخدام Google Translate API المجاني
+async function translateToArabic(text) {
+  try {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ar&dt=t&q=${encodeURIComponent(text)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    return data[0].map(x => x[0]).join('');
+  } catch(e) {
+    return '(تعذّرت الترجمة)';
+  }
+}
+
+async function translateQuestion() {
+  const el = document.getElementById('q-text');
+  const q = currentQuestions[currentIndex];
+  if (!translatedQ) {
+    el.innerHTML = `<span>${q.q}</span><span style="display:block;margin-top:6px;font-size:0.82rem;color:var(--blue);font-weight:600;direction:rtl;">⏳ جاري الترجمة...</span>`;
+    const ar = await translateToArabic(q.q);
+    el.innerHTML = `<span style="display:block;">${q.q}</span><span style="display:block;margin-top:6px;font-size:0.85rem;color:var(--blue);font-weight:600;direction:rtl;">${ar}</span>`;
+    translatedQ = true;
+  } else {
+    el.innerHTML = `<span>${q.q}</span>`;
+    translatedQ = false;
+  }
+}
+
+async function translateOptions() {
+  const optsEls = document.querySelectorAll('#opts-wrap .opt span');
+  const q = currentQuestions[currentIndex];
+  if (!translatedOpts) {
+    optsEls.forEach(el => {
+      el.innerHTML = el.innerHTML + `<span style="display:block;margin-top:3px;font-size:0.75rem;color:var(--blue);">⏳</span>`;
+    });
+    const promises = q.opts.map(opt => translateToArabic(opt));
+    const results = await Promise.all(promises);
+    optsEls.forEach((el, i) => {
+      el.innerHTML = `<span style="display:block;">${q.opts[i]}</span><span style="display:block;margin-top:4px;font-size:0.78rem;color:var(--blue);font-weight:600;direction:rtl;">${results[i]}</span>`;
+    });
+    translatedOpts = true;
+  } else {
+    optsEls.forEach((el, i) => { el.innerHTML = `<span>${q.opts[i]}</span>`; });
+    translatedOpts = false;
+  }
+}
+
+function toggleMode() {
+  const body = document.body;
+  const current = body.getAttribute('data-theme');
+  body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+}
+
+init();
+</script>
+
+</body>
+</html>
